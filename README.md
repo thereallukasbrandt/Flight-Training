@@ -2,32 +2,53 @@
 
 An interactive foundation for advanced flight-training topics, created by Lukas Brandt.
 
-## What is here
+Live website: https://thereallukasbrandt.github.io/Flight-Training/
 
-- Dark flight-deck interface with a responsive layout.
-- Interactive heading display, with keyboard-accessible controls.
-- Searchable topic spaces and category filters.
-- Accessible previews for future lessons.
-- Clear planned-content labels. No training lessons are published yet.
+## Current version
 
-## How the website works
+- Cinematic F-22 Raptor artwork that banks, moves, and changes scale as you scroll.
+- Normal page scrolling with a sticky scene; no scroll hijacking.
+- A motion pause control, plus automatic support for the visitor's reduced-motion preference.
+- Responsive desktop and mobile layouts.
+- One topic collection: **Maneuvers**, with six searchable lesson spaces:
+  1. Steep Turns
+  2. Power-On / Power-Off Stalls (one combined lesson)
+  3. Power-Off 180
+  4. Eights on Pylons
+  5. Dutch Rolls
+  6. Turns Around a Point
+- Each space opens a preview of the future Brief / Explore / Apply lesson layout.
 
-GitHub stores the source files. GitHub Pages publishes `index.html` as the website. This version uses HTML, CSS, and browser JavaScript, so no installation or build command is needed.
+The lessons are placeholders. No teaching content or flight guidance is currently published. The F-22 animation is photographic parallax, not a live 3D aircraft model. Card motifs are decorative rather than technical diagrams.
 
-To publish: open repository Settings > Pages, select Deploy from a branch, choose main and /(root), then Save. GitHub shows the live URL when deployment completes. Later commits to main automatically update the website.
+## Files
 
-Official setup: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+| File | Purpose |
+| --- | --- |
+| `index.html` | Page structure, navigation, and lesson preview panel |
+| `styles.css` | Layout, colors, typography, and responsive styles |
+| `app.js` | Lesson list, search, previews, mobile menu, and scroll animation |
+| `assets/f22-raptor.webp` | Optimized aircraft artwork with transparency |
+| `.nojekyll` | Serves the static files directly through GitHub Pages |
 
 ## Make an edit
 
-1. Open `index.html` on GitHub and choose the pencil button.
-2. Edit the text or code, then commit the change to main.
+1. Open the relevant file on GitHub and choose the pencil button.
+2. Edit the text or code, then commit the change to `main`.
 3. Wait for the Pages deployment to finish, then refresh the live website.
 
-The site is intentionally self-contained for the initial setup. To rename or add topic spaces, find `const topics` near the bottom of `index.html`. Each topic has a title, category, description, type, and visual. These are placeholders rather than complete lessons. Changing a card title does not create a lesson.
+To change the lesson list, edit `const lessons` near the top of `app.js`. Power-on and power-off stalls intentionally share a single entry. Changing a title does not create a lesson; add the briefing and purpose-built interaction when the content is ready.
 
-To preview locally, download `index.html` and open it in your browser. Optional Google Fonts require an internet connection; fallback fonts are provided.
+GitHub Pages publishes `main` from `/(root)`. Commits there automatically update the website. No dependencies or build command are needed. Asset paths are relative so they also work under the `/Flight-Training/` project URL.
+
+For a local preview, serve this folder with a static HTTP server. Google Fonts are optional; fallback fonts are provided. The current website does not collect or store visitor data.
+
+## Aircraft artwork
+
+The user supplied the F-22 reference photograph. The built-in image generation tool produced a transparent foreground interpretation, then it was saved in WebP format for the website. It is decorative artwork.
+
+Generation prompt: Extract only the single F-22 Raptor from the reference, preserving its recognizable geometry, dramatic banking underside view, orientation, silver-gray panels, cockpit, intakes, wings, tail fins, lighting, and surface details. Include the entire aircraft with transparent padding. Remove sky, clouds, vapor, trails, and exhaust haze. Use actual alpha transparency. Add no text, UI, logos, watermarks, border, or background.
 
 ## Next steps
 
-Add one complete module at a time: a sourced explanation, a purpose-built interaction, and an applied scenario. As the project grows, split styles, scripts, and module content into separate files. Student accounts or shared progress would require an additional backend service; the current version does not collect or store visitor data.
+Add one complete lesson at a time: a sourced briefing, a purpose-built interactive visualization, and an applied scenario with a guided debrief. Student accounts or shared progress would require an additional backend service.
