@@ -7,6 +7,18 @@ export function turn(bank, knots) {
   return { n, stallRatio: Math.sqrt(n), inducedRatio: n*n,
     radius: bank === 0 ? Infinity : v*v/(G*Math.tan(p)), rate: deg(G*Math.tan(p)/v) };
 }
+// End-on diagram in SVG coordinates (y increases downward). Forces use W = 1.
+// The span is banked down toward screen-right; its upward normal points inward.
+export function bankedTurnVectors(bank) {
+  const p = rad(bank);
+  return {
+    wing: { x: Math.cos(p), y: Math.sin(p) },
+    lift: { x: Math.tan(p), y: -1 },
+    vertical: { x: 0, y: -1 },
+    horizontal: { x: Math.tan(p), y: 0 },
+    weight: { x: 0, y: 1 }
+  };
+}
 export function pivotal(knots) { return (knots*KT)**2/G/FT; }
 export function liftCoefficient(alpha) { return alpha <= 16 ? 0.2 + alpha*0.08125 : 1.5 - (alpha-16)*0.07; }
 export function dutch(t, damping) {

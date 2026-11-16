@@ -1,7 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {turn,pivotal,groundTurn,glide,dutch,G,KT} from '../physics.js';
+import {turn,bankedTurnVectors,pivotal,groundTurn,glide,dutch,G,KT} from '../physics.js';
 const near=(a,b,t=1e-8)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
+test('banked-turn diagram keeps lift normal to the wing with correctly scaled components',()=>{
+ for(const bank of [-70,-60,-45,-30,0,15,30,45,60,70]){
+  const v=bankedTurnVectors(bank);
+  near(v.wing.x*v.lift.x+v.wing.y*v.lift.y,0);
+  near(Math.hypot(v.wing.x,v.wing.y),1);
+  near(Math.hypot(v.lift.x,v.lift.y),turn(bank,100).n);
+  near(v.lift.y+v.weight.y,0);
+  near(Math.hypot(v.vertical.x,v.vertical.y),Math.hypot(v.weight.x,v.weight.y));
+  near(v.vertical.x+v.horizontal.x,v.lift.x);
+  near(v.vertical.y+v.horizontal.y,v.lift.y);
+  if(bank>0){assert.ok(v.wing.y>0);assert.ok(v.lift.x>0);}
+ }
+});
 test('level-turn limiting cases and load/stall/induced-drag scaling',()=>{
  const level=turn(0,100),steep=turn(60,100);
  near(level.n,1);assert.equal(level.radius,Infinity);near(level.rate,0);

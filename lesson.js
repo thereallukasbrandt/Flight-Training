@@ -1,9 +1,9 @@
 import {lessons,sources} from './content.js';
-import {G,KT,FT,rad,deg,turn,pivotal,liftCoefficient,dutch,groundTurn,glide} from './physics.js';
+import {G,KT,FT,rad,deg,turn,bankedTurnVectors,pivotal,liftCoefficient,dutch,groundTurn,glide} from './physics.js';
 const $=id=>document.getElementById(id),f=(n,d=1)=>Number.isFinite(n)?n.toFixed(d):'∞';
 const colors={orange:'#ee9467',blue:'#526b87',white:'#eaf0f6'};
 const plane=(x,y,rotation=0)=>`<g transform="translate(${x} ${y}) rotate(${rotation})" fill="${colors.white}"><path d="M0-15 4-2 17 5 17 8 3 4 3 12 7 15 7 17 0 15-7 17-7 15-3 12-3 4-17 8-17 5-4-2Z"/></g>`;
-const svg=(content,label)=>`<svg viewBox="0 0 640 210" role="img" aria-label="${label}"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10" fill="${colors.orange}"/></marker></defs>${content}</svg>`;
+const svg=(content,label,height=210)=>`<svg viewBox="0 0 640 ${height}" role="img" aria-label="${label}"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10" fill="${colors.orange}"/></marker></defs>${content}</svg>`;
 const text=(x,y,s,color='')=>`<text x="${x}" y="${y}" ${color?`style="fill:${color}"`:''}>${s}</text>`;
 const line=(x,y,a,b,color='orange',dash='')=>`<path d="M${x} ${y}L${a} ${b}" fill="none" stroke="${colors[color]}" stroke-width="2" ${dash?'stroke-dasharray="'+dash+'"':''}/>`;
 function chart(series,{xmin=0,xmax=70,ymin=0,ymax=3.2,xlabel='Bank / degrees',ylabel='Ratio',marker=null,guide=null}={}) {
@@ -51,9 +51,25 @@ function display() {
 function update(){
  for(const input of $('controls').querySelectorAll('input[type=range]'))$(input.id+'-value').textContent=input.value+input.dataset.unit;
  if(current==='steep-turns'){
-  const bank=val('bank'),speed=val('speed'),m=turn(bank,speed),x=260+100*Math.tan(rad(bank));
+  const bank=val('bank'),speed=val('speed'),m=turn(bank,speed),vectors=bankedTurnVectors(bank);
+  const cx=240,cy=155,forceScale=92,halfSpan=62;
+  const lx=cx+forceScale*vectors.lift.x,ly=cy+forceScale*vectors.lift.y;
+  const wx1=cx-halfSpan*vectors.wing.x,wy1=cy-halfSpan*vectors.wing.y;
+  const wx2=cx+halfSpan*vectors.wing.x,wy2=cy+halfSpan*vectors.wing.y;
   $('metrics').innerHTML=metrics([[f(m.n,2)+' g','Load factor'],[f(m.stallRatio,2)+'×','Stall-speed ratio'],[f(m.inducedRatio,2)+'×','Induced-drag ratio']]);
-  $('graphic').innerHTML=svg(line(260,150,260,50,'blue','4 5')+line(260,50,x,50,'blue','4 5')+`<path d="M260 150L${x} 50" stroke="${colors.orange}" stroke-width="3" marker-end="url(#arrow)"/>`+line(260,150,260,202,'white')+`<g transform="rotate(${-bank} 260 150)"><path d="M200 150H320" stroke="${colors.white}" stroke-width="5"/><circle cx="260" cy="150" r="6" fill="${colors.white}"/></g>`+text(x+8,46,'L')+text(185,45,'L cos φ = W')+text(274,200,'W')+text(350,90,'Horizontal lift turns the airplane'),'Lift vector resolved into vertical and horizontal components');
+  const forceArrow=(id,x,y,color,marker)=>`<path id="${id}" d="M${cx} ${cy}L${x} ${y}" fill="none" stroke="${colors[color]}" stroke-width="2.3" marker-end="url(#${marker})"/>`;
+  const componentMarkers=`<defs><marker id="turn-component" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10" fill="${colors.blue}"/></marker><marker id="turn-weight" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10" fill="${colors.white}"/></marker></defs>`;
+  $('graphic').innerHTML=svg(componentMarkers+
+    line(cx,ly,lx,ly,'blue','4 5')+line(lx,ly,lx,cy,'blue','4 5')+
+    forceArrow('vertical-lift',cx,ly,'blue','turn-component')+
+    (bank>0?forceArrow('horizontal-lift',lx,cy,'blue','turn-component'):'')+
+    forceArrow('weight-vector',cx,cy+forceScale,'white','turn-weight')+
+    forceArrow('total-lift',lx,ly,'orange','arrow')+
+    `<path id="wing-span" d="M${wx1} ${wy1}L${wx2} ${wy2}" stroke="${colors.white}" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="5" fill="${colors.white}"/>`+
+    text(65,25,`End-on view • bank ${bank}°`)+text(lx+11,ly-8,'Total lift L',colors.orange)+
+    text(cx-120,ly+3,'L cos φ = W')+text(cx+12,cy+forceScale+5,'Weight W')+
+    text(Math.max(cx+88,lx+13),cy+5,bank>0?'L sin φ → turn center':'Horizontal lift = 0'),
+    'End-on view: lift is perpendicular to the banked wings; its vertical component balances weight and its horizontal component points into the turn',275);
   const ns=[],ss=[];for(let b=0;b<=70;b++){const t=turn(b,speed);ns.push([b,t.n]);ss.push([b,t.stallRatio]);}
   $('legend').innerHTML=legend([['Load factor',''],['Stall-speed ratio','blue']]);$('plot').innerHTML=chart([{points:ns,color:'orange'},{points:ss,color:'blue'}],{marker:{x:bank,points:[{y:m.n,color:'orange'},{y:m.stallRatio,color:'blue'}]}});
   $('caption').innerHTML=`At ${bank}°: radius <strong>${f(m.radius/FT,0)} ft</strong>, turn rate <strong>${f(m.rate,1)}°/s</strong> at ${speed} KTAS. ${bank===0?'No horizontal lift: no steady turn.':'The vertical lift component still balances weight.'}`;
