@@ -11,6 +11,7 @@ The homepage uses the existing F-22 artwork with scroll-linked lighting, highlig
 - `index.html`, `app.js`: homepage, search, lighting controls.
 - `lesson.html`, `lesson.js`: reusable lesson page and interactive SVG visuals.
 - `content.js`: lesson explanations, derivations, assumptions, and primary FAA source links.
+- `math-format.js`: semantic MathML for aligned equations, stacked fractions, radicals, and mathematical scripts; rendered natively without an external typesetting script.
 - `physics.js`: documented SI-unit teaching models.
 - `styles.css`: shared visual styles and responsive layout.
 - `tests/physics.test.js`: limiting cases, units, wind kinematics, energy accounting, and damping checks.

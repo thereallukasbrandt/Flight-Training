@@ -11,3 +11,14 @@
 
 @media(max-width:480px){.plot text{font-size:16px}.graphic text{font-size:14px}}
 .lesson-nav{scrollbar-width:none}.lesson-nav::-webkit-scrollbar{display:none}
+/* Native MathML keeps fractions, radicals, operators and scripts semantic. */
+.equation{font:19px/1.5 math,'Cambria Math','STIX Two Math',serif;padding:18px 14px;margin:16px 0 23px;border-left:2px solid #ee946748;background:#526b8709;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:var(--dusk) transparent}
+.equation math{font-family:math,'Cambria Math','STIX Two Math',serif;font-size:1em;margin:0;display:block;width:max-content;max-width:none;color:inherit}
+.equation mi,.equation mn,.equation mo,.equation mtext{color:inherit}
+.card-eq{font-family:math,'Cambria Math','STIX Two Math',serif;font-size:20px;height:86px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.card-eq math{font-size:1em;color:inherit;flex-shrink:0}
+@media(max-width:1100px){.equation{font-size:18px;padding:18px 12px}.card-eq{font-size:18px}}
+@media(max-width:800px){.equation{font-size:20px;padding:20px 14px}}
+@media(max-width:480px){.equation{font-size:18px;padding:18px 10px}.card-eq{font-size:21px;height:86px}}
+
+.equation mtd:first-child{text-align:right}.equation mtd:last-child{text-align:left}
