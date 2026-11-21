@@ -1,6 +1,10 @@
 # Flight Training
 
-Live: https://thereallukasbrandt.github.io/Flight-Training/
+Live: https://pilot-engineer-academy.vercel.app/
+
+GitHub Pages mirror: https://thereallukasbrandt.github.io/Flight-Training/
+
+Vercel project: `pilot-engineer-academy` in `lukebrandt-2817`. The current production release was uploaded directly from this repository. Automatic deployment on GitHub pushes requires adding the GitHub login connection in Vercel and linking this repository. `vercel.json` configures the existing static files without a build step.
 
 Six interactive conceptual lessons: steep turns, combined power-on/power-off stalls, power-off 180, eights on pylons, Dutch rolls, and turns around a point. Aerobatic Maneuvers is reserved for later content.
 
