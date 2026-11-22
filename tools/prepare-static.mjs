@@ -1,0 +1,10 @@
+import {cpSync,existsSync,mkdirSync,readdirSync} from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const destination=path.resolve(process.argv[2]||path.join(root,'dist'));
+if(destination===path.resolve(root))throw Error('Choose an output directory, not the source root.');
+mkdirSync(destination,{recursive:true});
+const files=readdirSync(root).filter(f=>/\.(?:html|css|js)$/.test(f)||['vercel.json','search-index.json'].includes(f));
+for(const name of [...files,'assets','technical'])if(existsSync(path.join(root,name)))cpSync(path.join(root,name),path.join(destination,name),{recursive:true});
+console.log(JSON.stringify({directory:destination,rootFiles:files.length}));
